@@ -13,6 +13,8 @@ begin:
 	jal readNum
 	add $t0, $v1,$0		# $t0 contains the arraysize
 
+	add $s5,$t0,$0
+
 	add $a1,$t0,$0
 	jal verifySize
 	add $t1, $v1, $0	# $t1 = 1 OK createArray, $t0= 0 go to begin again
@@ -21,6 +23,21 @@ begin:
 
 	add $a1,$0,$t0		# $a1 is passed to createArray
 	jal createArray
+
+	li $v0,4
+	la $a0,space
+	syscall
+
+	li $v0,1
+	add $a0,$s5,$0
+	syscall
+
+	li $v0,4
+	la $a0,space
+	syscall
+
+	add $v1,$0,$s5 		# pass the array size
+	jal printArray
 
 	li $v0,4
 	la $a0,end
@@ -102,7 +119,7 @@ making_array:
 
 	bne $t3,$t8,making_array
 
-	lw $t5,0($t7)
+	sw $t5,0($t7)
 
 	addi $t7,$t7,4
 	addi $t1,$t1,1
@@ -137,6 +154,24 @@ divisibleByThree:
 	jr $ra
 #---------------------------
 
+printArray:
+	add $s6,$a1,$0	#arraySize
+	la $t7,array  	#pointer to pos in array
+	la $s0,0		#counter
+
+loop:
+	bgt $s0,$s6,exitLoop
+	lw $s1,0($t7)
+	
+	li $v0,1
+	add $a0,$s1,$0
+	syscall
+	
+	addi $s0,$s0,1
+	addi $t7,$t7,4
+	j loop
+exitLoop:
+	jr $ra	
 
 
 
