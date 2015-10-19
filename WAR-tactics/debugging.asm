@@ -39,6 +39,20 @@ begin:
 	add $v1,$0,$s5 		# pass the array size
 	jal printArray
 
+	add $a1,$0, $s5
+	jal reverseArray
+
+	li $v0,4
+	la $a0,space
+	syscall
+
+	add $v1,$0,$s5 		# pass the array size
+	jal printArray
+
+	li $v0,4
+	la $a0,space
+	syscall
+
 	li $v0,4
 	la $a0,end
 	syscall
@@ -156,6 +170,15 @@ divisibleByThree:
 
 printArray:
 	add $s6,$a1,$0	#arraySize
+
+	li $v0,1
+	add $a0,$s6,$0
+	syscall
+
+	li $v0,4
+	la $a0,space
+	syscall
+
 	la $t7,array  	#pointer to pos in array
 	la $s0,0		#counter
 
@@ -171,7 +194,34 @@ loop:
 	addi $t7,$t7,4
 	j loop
 exitLoop:
+	sub $sp,$sp,4
+	sw $t7,0($sp)
 	jr $ra	
+#---------------------------
+reverseArray:
+	add $t1,$0,$a1		# $t1 arraySize
+	li $t4,0			# $t4 count	
+	li $t5,0			# $t5 temp value array
+	li $t6,0			
+
+	la $t2,array 		# $t2 firstIndexArray
+	lw $t3,0($sp)		# $t3 lastIndexOfArray
+	addi $sp,$sp,4
+
+
+loop2:
+	beq $t4,$t1,exitloop2
+	lw $t5,0($t3)
+	sw $t5,0($t2)
+
+	addi $t4,$t4,1
+	addi $t2,$t2,4
+	sub $t3,$t3,4
+	j loop2
+exitloop2:
+	jr $ra	
+
+
 
 
 
